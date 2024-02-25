@@ -1,0 +1,90 @@
+import java.io.*;
+import java.math.*;
+import java.security.*;
+import java.text.*;
+import java.util.*;
+import java.util.concurrent.*;
+import java.util.function.*;
+import java.util.regex.*;
+import java.util.stream.*;
+import static java.util.stream.Collectors.joining;
+import static java.util.stream.Collectors.toList;
+
+
+class Result {
+
+    /*
+     * Complete the 'decodeMessage' function below.
+     *
+     * The function is expected to return a STRING.
+     * The function accepts following parameters:
+     *  1. STRING text
+     *  2. STRING message
+     */
+    public static String decodeMessage(String text, String message) {
+        
+    
+        String removeExclam = text.replaceAll("[!]", "."); //"!" -> "."
+        String removeQuest = removeExclam.replaceAll("[?]", "."); //"?" -> "."
+
+        String[] sentenceArray = removeQuest.split("\\.\\s+"); //sentences -> array values
+
+        for(int i = 0; i < sentenceArray.length; i++) { //replace all non-alphanumeric values
+            sentenceArray[i] = sentenceArray[i].replaceAll("[^a-zA-Z0-9 ]", " "); //replaces non-alphanumeric values with space
+            sentenceArray[i] = sentenceArray[i].trim(); //removes leading/trailing spaces
+            sentenceArray[i] = sentenceArray[i].replaceAll(" +", " "); //removes double spaces -> single space
+        }
+        StringBuilder sb = new StringBuilder();
+        String[] code = message.split("\\s+"); //splits message up ([a.b.c, d.e.f, g.h.i])
+
+        int s = 0; //sentence index
+        int w = 0; //word index
+        int c = 0; //char index
+    
+        for(int i = 0; i < code.length; i++) { 
+            String[] threeNum = code[i].split("\\.");
+
+        s = Integer.valueOf(threeNum[0]) - 1; 
+        w = Integer.valueOf(threeNum[1]) - 1;
+        c = Integer.valueOf(threeNum[2]) - 1;
+      
+        if(s < sentenceArray.length && s >= 0) { //is sentence index valid (exist(?))
+            String[] valid = sentenceArray[s].split("\\s+");
+
+            if(w >= 0 && c >= 0 && w < valid.length && c < valid[w].length()) { // word || char index check
+                char yer = valid[w].charAt(c); //add
+
+                sb.append(yer);
+            }
+            else {
+            sb.append(" ");
+            }
+        }
+        else {
+            sb.append(" ");
+        }
+        }
+        String finalAnswer = sb.toString();
+        return finalAnswer;
+  }
+}
+    
+
+public class Solution {
+    public static void main(String[] args) throws IOException {
+        BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(System.in));
+        BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(System.getenv("OUTPUT_PATH")));
+
+        String text = bufferedReader.readLine();
+
+        String message = bufferedReader.readLine();
+
+        String result = Result.decodeMessage(text, message);
+
+        bufferedWriter.write(result);
+        bufferedWriter.newLine();
+
+        bufferedReader.close();
+        bufferedWriter.close();
+    }
+}
